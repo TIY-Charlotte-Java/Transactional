@@ -19,11 +19,11 @@ This system should:
    - This can be a form post to `/add-to-cart`.
    - The "cart" is basically a list of the items in the user's current order.
    - You can just have three boxes here which comprise an item (quantity, name, and amount)
-   - The user gets to pick (not like in real life) the item, its cost, and its quantity before it gets added to the cart.
-- Allow a user to "checkout" the cart (via a button, perhaps, on the homepage)
+   - The user gets to pick the details of the item (its name, its cost, and its quantity) before it gets added to the cart.
+- Allow a user to "checkout" the cart
    - This can be a `GET` request to `/checkout`.
-   - "Checking Out" is basically showing them an order summary page, while clearing their cart.
-   - This summary page should show the user data, and the details of their order (the quantities, amount, and total amount)
+   - This "checkout" page should show the user data, and the details of their order (the quantities, amount, and total amount)
+   - There should be a button (a `POST` to `/checkout`) that finalizes their order and clears their cart.
 - Use Maven or Gradle
 - Be deployed to Heroku
 

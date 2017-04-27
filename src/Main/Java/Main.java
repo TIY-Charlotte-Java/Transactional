@@ -1,11 +1,14 @@
 import org.h2.tools.Server;
+import spark.ModelAndView;
 import spark.Spark;
+import spark.template.mustache.MustacheTemplateEngine;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Jake on 4/27/17.
@@ -19,23 +22,15 @@ public class Main {
         Statement stmt = conn.createStatement();
 
         stmt.execute("create table if not exists users (id identity, username varchar)");
-        stmt.execute("create table if not exists items (order_id identity, name varchar, cost double, quantity double)");
-        stmt.execute("create table if not exists orders (user_id identity, quantity double, amount double)");
+        stmt.execute("create table if not exists items (order_id identity, item_name varchar, item_cost double," +
+                " item_quantity double)");
+        stmt.execute("create table if not exists orders (order_id identity, owner varchar, active_order boolean)");
 
         Spark.post(
-                "/login",
+                "/login", //check database for login. If return null, create new user. Go to last active order.
                 ((request, response) -> {
                     String name = request.queryParams("name");
-                    ArrayList<User> userCheck = SQL.viewUsers(conn);
-                    User currentUser = null;
-                    for (User a : userCheck) {
-                        if (a.username.equals(name)) {
-                            currentUser = a;
-                            break;
-                        } else {
-                            SQL.createUser(conn, name);
-                        }
-                    }
+
                     return "";
                 })
         );
@@ -49,11 +44,14 @@ public class Main {
                 })
         );
         Spark.get(
-                "/checkout", //show user data and detail of over
+                "/checkout", //show user data and detail of order
                 ((request, response) -> {
+                    HashMap m = new HashMap();
+                    m.put("all", SQL.total(conn, currentUser));
+                    return new ModelAndView(m, "checkout.html");
 
-                    return "";
-                })
+                }),
+                new MustacheTemplateEngine()
         );
         Spark.post(
                 "/checkout", //process order, mark order as complete

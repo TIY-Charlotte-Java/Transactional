@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+</head>
+<body>
+<h3> Items in your cart: </h3>
+</h2>
+<ol>
+    {{#all}}
+    <li>
+        <h3><b> Order ID: {{orderID}} <br></b></h3>
+        <p>
+            Item name: {{itemName}} <br>
+            Item cost: {{itemCost}} <br>
+            Quantity: {{itemQuantity}} <br>
+        </p>
+    </li>
+    {{/all}}
+</ol>
+
+</h2>
+</body>
+</html>

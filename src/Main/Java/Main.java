@@ -35,12 +35,15 @@ public class Main {
                     //this session is stored in a cookie and can store a value.
                     //we can call this as many times as we want and it wont remake a session until the session is
                     //invalid.
-                    User a = new User(SQL.selectUser(conn, name));
-                    if (!a.username.equals(name)) {
-                        session.attribute("username", name); //we are storing the value of "username" inside the cookie
-                        //of session and passing it the name provided by the user.
-                    }
+                    User u = SQL.selectUser(conn, name);
 
+                    if (u == null) {
+                        SQL.createUser(conn, name);
+                    }
+                    session.attribute("username", name);
+                    //we are storing the value of "username" inside the cookie
+                    //of session and passing it the name provided by the user.
+                    response.redirect("/");
                     return "";
                 })
         );
@@ -51,7 +54,10 @@ public class Main {
                     String itemName = request.queryParams("itemName");
                     String itemCost = request.queryParams("itemCost");
                     String itemQuantity = request.queryParams("itemQuantity");
-                    Item item = new Item(currentOrder, itemName, Double.valueOf(itemCost), Double.valueOf(itemQuantity));
+                    Session session = request.session();
+                    String name = session.attribute("username");
+                    Integer order = SQL.checkCart(conn,name);
+                    Item item = new Item(itemName, Double.valueOf(itemCost), Double.valueOf(itemQuantity), order);
                     SQL.addItems(conn, item);
                     return "";
                 })
@@ -72,13 +78,26 @@ public class Main {
         Spark.post(
                 "/checkout", //process order, mark order as complete
                 ((request, response) -> {
-                    System.out.println("making order is in-active");
                     Session session = request.session();
                     String currentUser = session.attribute("username"); //gets current user as a string
                     SQL.completeOrder(conn, currentUser); //marks order boolean complete = true
                     session.invalidate(); //logs out session of user.
+                    response.redirect("/");
                     return "";
                 })
+        );
+        Spark.get(
+                "/",
+                ((request, response) -> {
+                    String currentUser = request.session().attribute("username");
+                    if (currentUser == null) {
+                        response.redirect("login-page.html");
+                    }
+                    HashMap m = new HashMap();
+                    return new ModelAndView(m, "home.html");
+
+                }),
+                new MustacheTemplateEngine()
         );
 
 

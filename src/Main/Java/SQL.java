@@ -18,40 +18,49 @@ public class SQL {
         }
         return users;
     }
+
     public static void createUser(Connection conn, String username) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("insert into users values (null, ?)");
         stmt.setString(1, username);
         stmt.execute();
-        }
+    }
 
     public static void addItems(Connection conn, Item items) throws SQLException { //adds items to order
         PreparedStatement stmt = conn.prepareStatement("insert into items values(null,?,?,?,?)");
         stmt.setString(1 , items.itemName);
         stmt.setDouble(2 , items.itemCost);
         stmt.setDouble(3 , items.itemQuantity);
-        stmt.setString(4 , items.orderName);
+        stmt.setInt(4 , items.orderID);
+        stmt.execute();
     }
 
-    public static String selectUser(Connection conn, String testName) throws SQLException { //checks user vs database
-        PreparedStatement stmt = conn.prepareStatement("select column 2 where username = ?");
+    public static User selectUser(Connection conn, String testName) throws SQLException { //checks user vs database
+        PreparedStatement stmt = conn.prepareStatement("select * from users where username = ?");
         stmt.setString(1 , testName);
         ResultSet results = stmt.executeQuery();
-        return results;
+
+        User u = null;
+
+        if (results.next()) {
+            String username = results.getString("username");
+            int id = results.getInt("id");
+            u = new User(id, username);
+        }
+
+        return u;
     }
 
-    public static ArrayList total(Connection conn, String order) throws SQLException{ //get items of order
+    public static ArrayList total(Connection conn, String user) throws SQLException{ //get items of order
         ArrayList all = new ArrayList();
-        Statement stmt=conn.createStatement();
-        ResultSet r = stmt.executeQuery("select * from orders inner join users on users.username = orders.owner");
-        ResultSet results = stmt.executeQuery("select * from items inner join orders on " +
-                "items.order_ID=orders.order_ID");
-        ResultSet results2 = stmt.executeQuery("select * from items where items.name = ?");
-        ResultSet results3 = stmt.executeQuery("select * from items where items.active = true");
+        PreparedStatement stmt = conn.prepareStatement("select * from items inner join orders on orders.id = items.order_id where"
+                + "orders.active = true and owner = ?");
+        stmt.setString(1, user);
+        ResultSet results = stmt.executeQuery();
 
-        while(results3.next()) {
-            String name = results3.getString("item_name");
-            String cost = results3.getString("item_cost");
-            String quantity = results3.getString("item_quantity");
+        while(results.next()) {
+            String name = results.getString("item_name");
+            String cost = results.getString("item_cost");
+            String quantity = results.getString("item_quantity");
             all.add(new Item(name, Double.valueOf(cost), Double.valueOf(quantity)));
         }
         return all;

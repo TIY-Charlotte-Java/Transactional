@@ -4,10 +4,8 @@
     <output url="file://$MODULE_DIR$/../../build/classes/main" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../src/Main">
-      <sourceFolder url="file://$MODULE_DIR$/../../src/Main/Java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/../../src/Main/Java/public/main" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../src/Main/Java/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../src/Main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../src/Main/resources" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -19,9 +17,11 @@
     <orderEntry type="library" name="Gradle: com.github.spullara.mustache.java:compiler:0.9.0" level="project" />
     <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.13" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.slf4j:slf4j-simple:1.7.21" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty:jetty-server:9.3.6.v20151106" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty:jetty-webapp:9.3.6.v20151106" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty.websocket:websocket-server:9.3.6.v20151106" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.slf4j:slf4j-api:1.7.21" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty.websocket:websocket-servlet:9.3.6.v20151106" level="project" />
     <orderEntry type="library" name="Gradle: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jetty:jetty-http:9.3.6.v20151106" level="project" />

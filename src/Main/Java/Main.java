@@ -16,21 +16,21 @@ import java.util.HashMap;
  */
 public class Main {
     public static void main(String[] args) throws SQLException {
-        Spark.staticFileLocation("/public");
+//        Spark.staticFileLocation("/public");
         Server.createWebServer().start();
         //port(Integer.valueOf(System.getenv("PORT")));
         Connection conn = DriverManager.getConnection("jdbc:h2:./main");
         Statement stmt = conn.createStatement();
 
         stmt.execute("create table if not exists users (id identity, username varchar)");
-        stmt.execute("create table if not exists items (order_id identity, item_name varchar, item_cost double," +
+        stmt.execute("create table if not exists items (id identity, item_name varchar, item_cost double," +
                 " item_quantity double, order_id int)");
-        stmt.execute("create table if not exists orders (order_id identity, owner varchar, active_order boolean)");
+        stmt.execute("create table if not exists orders (id identity, owner varchar, active_order boolean)");
 
         Spark.post(
                 "/login", //check database for login. If return null, create new user. Go to last active order.
                 ((request, response) -> {
-                    String name = request.queryParams("name");
+                    String name = request.queryParams("username");
                     Session session = request.session(); //requests session, if non exists, it will make a new one
                     //this session is stored in a cookie and can store a value.
                     //we can call this as many times as we want and it wont remake a session until the session is
@@ -59,6 +59,8 @@ public class Main {
                     Integer order = SQL.checkCart(conn,name);
                     Item item = new Item(itemName, Double.valueOf(itemCost), Double.valueOf(itemQuantity), order);
                     SQL.addItems(conn, item);
+
+                    response.redirect("/");
                     return "";
                 })
         );
@@ -99,7 +101,22 @@ public class Main {
                 }),
                 new MustacheTemplateEngine()
         );
-
+        Spark.get(
+                "/login-page.html",
+                ((request, response) -> {
+                    HashMap m = new HashMap();
+                    return new ModelAndView(m, "login-page.html");
+                }),
+                new MustacheTemplateEngine()
+        );
+        Spark.get(
+                "/home.html",
+                ((request, response) -> {
+                    HashMap m = new HashMap();
+                    return new ModelAndView(m, "home.html");
+                }),
+                new MustacheTemplateEngine()
+        );
 
     }
 }

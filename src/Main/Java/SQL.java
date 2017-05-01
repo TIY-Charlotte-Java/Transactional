@@ -52,7 +52,7 @@ public class SQL {
     public static ArrayList total(Connection conn, String user) throws SQLException { //get items of order
         ArrayList all = new ArrayList();
         PreparedStatement stmt = conn.prepareStatement("select * from items inner join orders on orders.id = items.order_id where"
-                + "orders.active = true and owner = ?");
+                + " orders.active_order = true and owner = ?");
         stmt.setString(1, user);
         ResultSet results = stmt.executeQuery();
 
@@ -66,27 +66,36 @@ public class SQL {
     }
 
     public static void completeOrder(Connection conn, String orderOwner) throws SQLException { //mark order as complete
-        PreparedStatement stmt = conn.prepareStatement("update orders set active = false where owner = ?");
+        PreparedStatement stmt = conn.prepareStatement("update orders set active_order = false where owner = ?");
         stmt.setString(1, orderOwner);
-
+        stmt.execute();
     }
 
     public static Integer checkCart(Connection conn, String user) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("select order_id from orders inner join users on orders.owner" +
-                " = users.username where orders.active = true and owner = ?");
+        PreparedStatement stmt = conn.prepareStatement("select orders.id from orders inner join users on orders.owner" +
+                " = users.username where orders.active_order = true and orders.owner = ?");
         stmt.setString(1, user);
         ResultSet result = stmt.executeQuery();
-        Integer ID = result.getInt("order");
-        if (ID == null) {
+
+        Integer ID = null;
+
+        if (result.next()) {
+            ID = result.getInt("id");
+        } else {
             PreparedStatement stmt2 = conn.prepareStatement("insert into orders values(null, ?, ?)");
             stmt2.setString(1, user);
             stmt2.setBoolean(2, true);
-            ResultSet result2 = stmt2.executeQuery();
-            Integer newID = result2.getInt("order");
-            return newID;
-        } else {
-            return ID;
+            stmt2.execute();
+
+            stmt2 = conn.prepareStatement("select id from orders where active_order = true");
+            ResultSet results = stmt2.executeQuery();
+
+            results.next();
+            ID = results.getInt("id");
+
         }
+
+        return ID;
     }
 }
 

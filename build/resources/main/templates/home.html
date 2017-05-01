@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+<h2>
+    Add a new item to cart:
+    <form action="/add-to-cart" method="Post">
+        <input type="text" placeholder="Enter item name" name="itemName"/>
+        <input type="text" placeholder="Enter item cost" name="itemCost"/>
+        <input type="text" placeholder="Enter quantity" name="itemQuantity"/>
+        <button type= "Post">Add!</button>
+    </form>
+
+    <form action="/checkout" method="Get">
+    <button type= "Get">Checkout</button>
+    </form>
+
+</h2>
+
+</body>
+</html>
